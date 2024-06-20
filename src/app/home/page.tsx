@@ -1,7 +1,9 @@
 "use client"
 import { useState } from "react"
 import { cn } from "@/lib/utils"
-import { techStack , initialTopics } from "@/lib/constant"
+import { techStack , initialTopics , interviewRoles } from "@/lib/constant"
+import axios from "axios"
+import { useRouter } from "next/navigation"
 
 
 interface TechStackType {
@@ -11,10 +13,12 @@ interface TechStackType {
 
 
 function Home(){
+    const router = useRouter()
     const [ topics , setTopics ] = useState(initialTopics)
     const [ active , setActive] = useState("FullStack Developer")
     const [ tech , setTech ] = useState<TechStackType []>([...techStack["FullStack Developer"]])
     const [ role , setRole ] = useState('junior')
+
     
 
     function handleClick(topic : { title : string , active : boolean }){
@@ -34,6 +38,23 @@ function Home(){
             return item
         })
         setTech(updatedArr)
+    }
+
+    function handleSubmit(){
+        router.push('/interview')
+
+        // const techArray = tech.filter( item => item.active === true )
+
+        // const response = await axios.post(`process.env.NEXT_URL/api` , {
+        //     role ,
+        //     tech : techArray ,
+        //     topics 
+        // })
+
+        // const { data } = response
+        // if(response.status == 200 ){
+
+        // }
     }
 
 
@@ -68,16 +89,20 @@ function Home(){
         <h1 className="text-3xl my-8 font-semibold">Select Level</h1> 
         <div className="w-fit mb-4 bg-stone-700 p-[2px] rounded-md mx-auto flex gap-1">
         {
-            roles.map((item) => {
-            return 
+            interviewRoles.map((item , index) => {
+            return <button
+                    onClick={() =>  setRole(item)  }
+                    key={index}
+                    className={ cn("w-fit px-4 p-2 bg-white-700 rounded text-white " , role === item ? 'bg-stone-900' : ''  )}>
+                    {item}
+                </button>
 
-            </div>
           })
         }
-            <div className={ cn("w-fit px-3 p-1 bg-white-700 rounded text-white" , role === 'junior' ? 'bg-stone-700' : ''  )}>Junior</div>
-            <div className={cn("w-fit px-3 p-1 bg-white-700 rounded text-white" , role == 'senior' ? 'bg-stone-700' : '')}>Senior</div>
         </div>
-        <button className="bg-green-600 mt-4 p-2 px-6 rounded-lg font-semibold w-full hover:bg-green-600 active:scale-105">Start the Interview</button>
+        <button
+        onClick={handleSubmit}
+        className="bg-green-600 mt-4 p-2 px-6 rounded-lg font-semibold w-full hover:bg-green-600 active:scale-105">Start the Interview</button>
     </div>
 
     </div>

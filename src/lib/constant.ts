@@ -87,3 +87,5 @@ export const techStack:TechStack = {
       { title: "Jupyter Notebook", active: false }
     ]
   }
+
+export const interviewRoles = ["intern" , "junior" , "senior" ]
