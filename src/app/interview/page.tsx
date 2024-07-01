@@ -1,8 +1,10 @@
 "use client"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { ArrowRight } from "lucide-react"
 import { useRouter } from "next/navigation"
 import Dictaphone from "@/hooks/speech"
+import TextToSpeech from "@/components/TextToSpeech"
+import axios from "axios"
 
 const questions = [
     {
@@ -60,14 +62,36 @@ const questions = [
       "ans": 2
     }
   ]
+
+  interface QuestionType {
+    questions : string ,
+    point : number ,
+    type : string 
+  }
   
 
 function Interview(){
     const [active , setActive ] = useState(0) 
-    const [question , setQuestion ] = useState()
+    const [question , setQuestion ] = useState<QuestionType [] | null >(null)
 
     const router = useRouter()
 
+    useEffect(() => {
+      async function getQuestion(){
+        try{
+          // const response = await axios.get(`${process.env.NEXT_URL}/api/generateQuestions`)
+          const response = await axios.get(`http://localhost:3000/api/generateQuestions`)
+          console.log(response.data)
+          setQuestion( response.data.data )
+        }
+        catch(err){
+          if(err instanceof Error) console.log(err.message)
+        } 
+      }
+
+      getQuestion()
+    } , [])
+   
     function handleNext(){
         if(active === questions.length - 1 ){
             router.push('/calculate')
@@ -78,35 +102,56 @@ function Interview(){
     }
 
     return <div className="w-3/5 mx-auto mt-20 flex flex-col">
-            <div className="mb-2 flex justify-between items-center">
+            {/* <div className="mb-2 flex justify-between items-center">
                 <h2 className="text-xl font-semibold">{ questions[active].question }</h2>
                 <span className="bg-white rounded text-black p-1">{ questions[active].type.toString() }</span>
+            </div> */}
+
+
+            <div >
+              {/* <TextToSpeech text={greet} /> */}
+            </div>
+
+              {
+                ( question !== null ) ?
+                <div>
+                  <div className="flex justify-between items-start gap-3">
+                  <h1 className="text-xl font-semibold">{ question[active].questions }</h1>
+                  <span className="bg-zinc-800 text-sm p-1 rounded border border-zinc-500">{ question[active].type }</span>
+                  </div>
+                    <div className="flex flex-col gap- mt-4">
+                        <label htmlFor="txt">Enter Your Answer</label>
+                        <textarea rows={10} className="p-1 px-3 rounded outline-none" name="answer" id="txt"></textarea>
+                    </div>
+                </div>
+                :
+                ""
+              }
+            <div className="my-4">
+
             </div>
 
 
             <div className="my-4">
             {
 
-                questions[active].type !== 'mcq' && 
-                    <div className="flex flex-col gap-4">
-                        <label htmlFor="txt">Enter Your Answer</label>
-                        <textarea rows={10} className="p-1 px-3 rounded outline-none" name="answer" id="txt"></textarea>
-                    </div>
+                // question[active].type !== 'mcq' && 
+
             }
 
             {
-                questions[active].type === 'mcq' ? 
-                <div className="flex flex-col gap-3">
-                    {
-                        questions[active]?.options!.map((item : string , index) => {
-                            return <button
-                            className="p-2 bg-zinc-800 hover:bg-zinc-700 transition-colors font-medium border border-zinc-700 rounded" 
-                            key={index}>{item}</button>
-                        })
-                    }
-                </div>
-                :
-                ""
+                // questions[active].type === 'mcq' ? 
+                // <div className="flex flex-col gap-3">
+                //     {
+                //         questions[active]?.options!.map((item : string , index) => {
+                //             return <button
+                //             className="p-2 bg-zinc-800 hover:bg-zinc-700 transition-colors font-medium border border-zinc-700 rounded" 
+                //             key={index}>{item}</button>
+                //         })
+                //     }
+                // </div>
+                // :
+                // ""
             }
 
                 

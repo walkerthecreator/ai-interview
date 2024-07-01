@@ -45,6 +45,9 @@ const BackgroundGrid = ({
 }
 
 const Home = ()=>{
+  
+
+  // console.log("prompt" , process.env.NEXT_PUBLIC_PROMPT)
   return <div>
     <Nav />
     <BackgroundGrid />
