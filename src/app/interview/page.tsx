@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react"
 import { ArrowRight } from "lucide-react"
 import { useRouter } from "next/navigation"
-import Dictaphone from "@/hooks/speech"
+import Dictaphone from "@/components/speech"
 import TextToSpeech from "@/components/TextToSpeech"
 import axios from "axios"
 
@@ -71,15 +71,16 @@ const questions = [
   
 
 function Interview(){
+
     const [active , setActive ] = useState(0) 
     const [question , setQuestion ] = useState<QuestionType [] | null >(null)
+    const [ answer , setAnswer ] = useState("")
 
     const router = useRouter()
 
     useEffect(() => {
       async function getQuestion(){
         try{
-          // const response = await axios.get(`${process.env.NEXT_URL}/api/generateQuestions`)
           const response = await axios.get(`http://localhost:3000/api/generateQuestions`)
           console.log(response.data)
           setQuestion( response.data.data )
@@ -94,11 +95,16 @@ function Interview(){
    
     function handleNext(){
         if(active === questions.length - 1 ){
-            router.push('/calculate')
+            router.push('/result')
         }
         else{
             setActive(active + 1)
         }
+    }
+
+    function handleNote(note : string ){
+      console.log('running')
+      setAnswer(note)
     }
 
     return <div className="w-3/5 mx-auto mt-20 flex flex-col">
@@ -108,20 +114,20 @@ function Interview(){
             </div> */}
 
 
-            <div >
-              {/* <TextToSpeech text={greet} /> */}
+            <div className="my-10">
+              <Dictaphone handleNote={handleNote}/>
             </div>
 
               {
                 ( question !== null ) ?
                 <div>
                   <div className="flex justify-between items-start gap-3">
-                  <h1 className="text-xl font-semibold">{ question[active].questions }</h1>
-                  <span className="bg-zinc-800 text-sm p-1 rounded border border-zinc-500">{ question[active].type }</span>
+                  <h1 className="text-2xl font-semibold">{ question[active].questions }</h1>
+                  <span className="bg-zinc-800 text-zinc-200 text-sm p-1 px-2 rounded border border-zinc-600">{ question[active].type }</span>
                   </div>
-                    <div className="flex flex-col gap- mt-4">
-                        <label htmlFor="txt">Enter Your Answer</label>
-                        <textarea rows={10} className="p-1 px-3 rounded outline-none" name="answer" id="txt"></textarea>
+                    <div className="flex flex-col gap-3 mt-4">
+                        <textarea placeholder="Start Speaking..." rows={10} defaultValue={answer} 
+                        className="p-2 px-3 rounded border border-zinc-700 outline-none" name="answer" id="txt"></textarea>
                     </div>
                 </div>
                 :
@@ -133,11 +139,6 @@ function Interview(){
 
 
             <div className="my-4">
-            {
-
-                // question[active].type !== 'mcq' && 
-
-            }
 
             {
                 // questions[active].type === 'mcq' ? 
@@ -153,13 +154,11 @@ function Interview(){
                 // :
                 // ""
             }
-
-                
             </div>
-            <Dictaphone />
+
             
 
-            <button className="p-2 flex justify-center gap-1 font-semibold rounded bg-green-500 mt-10 w-40 mx-auto" 
+            <button className="p-2 flex justify-center gap-1 font-semibold rounded bg-green-600 mt-10 w-40 mx-auto" 
             onClick = { handleNext }>
                 { active == questions.length - 1  ? "Finish" : "Next"  } 
                 <ArrowRight/>
