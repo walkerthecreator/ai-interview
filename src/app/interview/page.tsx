@@ -1,170 +1,346 @@
-"use client"
-import { useEffect, useState } from "react"
-import { ArrowRight } from "lucide-react"
-import { useRouter } from "next/navigation"
-import Dictaphone from "@/components/speech"
-import TextToSpeech from "@/components/TextToSpeech"
-import axios from "axios"
+"use client";
+import { useEffect, useRef, useState } from "react";
+import { Keyboard, Pause, Play, Repeat } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
+import Dictaphone from "@/components/speech";
+import axios from "axios";
+import { useQuestions } from "@/stores/questions.store";
+import { useToast } from "@/components/ui/use-toast";
+import WordFadeIn from "@/components/FadeWord";
+
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import Image from "next/image";
 
 const questions = [
-    {
-      "type": "behaviour",
-      "question": "Describe a situation where you encountered a bug in your code. How did you approach debugging the issue?"
-    },
-    {
-      "type": "behaviour",
-      "question": "You're working on a feature with a senior developer. They suggest an approach you're not familiar with. How do you handle this situation?"
-    },
-    {
-      "type": "mcq",
-      "question": "Which of the following best describes the purpose of JSX in React?",
-      "options": [
-        "A way to style components",
-        "A syntax extension for writing HTML within JavaScript",
-        "A method for managing state in React applications",
-        "A library for building user interfaces"
-      ],
-      "ans": 1
-    },
-    {
-      "type": "theory",
-      "question": "Explain the concept of the DOM (Document Object Model) and its role in web development."
-    },
-    {
-      "type": "output",
-      "question": "Write HTML code to create a responsive card layout with an image, title, and description. The card should adjust its size based on the screen width."
-    },
-    {
-      "type": "tailwindcss",
-      "question": "How would you use Tailwind CSS to achieve a flexbox layout with two evenly sized columns?"
-    },
-    {
-      "type": "javascript",
-      "question": "What is the difference between 'let' and 'const' declarations in JavaScript?"
-    },
-    {
-      "type": "typescript",
-      "question": "Explain how interfaces are used in TypeScript to define the structure of objects."
-    },
-    {
-      "type": "error",
-      "question": "The following JavaScript code throws an error: `function add(x, y) { return x + y; }; console.log(add(5, 'hello'));` Why does this code produce an error, and how can you fix it?"
-    },
-    {
-      "type": "mcq",
-      "question": "What is the primary benefit of using a version control system like Git in a development workflow?",
-      "options": [
-        "Allows for easy collaboration on code between developers",
-        "Tracks changes made to code over time",
-        "Both A and B",
-        "Provides a secure way to store code"
-      ],
-      "ans": 2
-    }
-  ]
+  {
+    type: "behaviour",
+    question:
+      "Describe a situation where you encountered a bug in your code. How did you approach debugging the issue?",
+  },
+  {
+    type: "behaviour",
+    question:
+      "You're working on a feature with a senior developer. They suggest an approach you're not familiar with. How do you handle this situation?",
+  },
+  {
+    type: "mcq",
+    question:
+      "Which of the following best describes the purpose of JSX in React?",
+    options: [
+      "A way to style components",
+      "A syntax extension for writing HTML within JavaScript",
+      "A method for managing state in React applications",
+      "A library for building user interfaces",
+    ],
+    ans: 1,
+  },
+  {
+    type: "theory",
+    question:
+      "Explain the concept of the DOM (Document Object Model) and its role in web development.",
+  },
+  {
+    type: "output",
+    question:
+      "Write HTML code to create a responsive card layout with an image, title, and description. The card should adjust its size based on the screen width.",
+  },
+  {
+    type: "tailwindcss",
+    question:
+      "How would you use Tailwind CSS to achieve a flexbox layout with two evenly sized columns?",
+  },
+  {
+    type: "javascript",
+    question:
+      "What is the difference between 'let' and 'const' declarations in JavaScript?",
+  },
+  {
+    type: "typescript",
+    question:
+      "Explain how interfaces are used in TypeScript to define the structure of objects.",
+  },
+  {
+    type: "error",
+    question:
+      "The following JavaScript code throws an error: `function add(x, y) { return x + y; }; console.log(add(5, 'hello'));` Why does this code produce an error, and how can you fix it?",
+  },
+  {
+    type: "mcq",
+    question:
+      "What is the primary benefit of using a version control system like Git in a development workflow?",
+    options: [
+      "Allows for easy collaboration on code between developers",
+      "Tracks changes made to code over time",
+      "Both A and B",
+      "Provides a secure way to store code",
+    ],
+    ans: 2,
+  },
+];
 
-  interface QuestionType {
-    questions : string ,
-    point : number ,
-    type : string 
-  }
-  
-
-function Interview(){
-
-    const [active , setActive ] = useState(0) 
-    const [question , setQuestion ] = useState<QuestionType [] | null >(null)
-    const [ answer , setAnswer ] = useState("")
-
-    const router = useRouter()
-
-    useEffect(() => {
-      async function getQuestion(){
-        try{
-          const response = await axios.get(`http://localhost:3000/api/generateQuestions`)
-          console.log(response.data)
-          setQuestion( response.data.data )
-        }
-        catch(err){
-          if(err instanceof Error) console.log(err.message)
-        } 
-      }
-
-      getQuestion()
-    } , [])
-   
-    function handleNext(){
-        if(active === questions.length - 1 ){
-            router.push('/result')
-        }
-        else{
-            setActive(active + 1)
-        }
-    }
-
-    function handleNote(note : string ){
-      console.log('running')
-      setAnswer(note)
-    }
-
-    return <div className="w-3/5 mx-auto mt-20 flex flex-col">
-            {/* <div className="mb-2 flex justify-between items-center">
-                <h2 className="text-xl font-semibold">{ questions[active].question }</h2>
-                <span className="bg-white rounded text-black p-1">{ questions[active].type.toString() }</span>
-            </div> */}
-
-
-            <div className="my-10">
-              <Dictaphone handleNote={handleNote}/>
-            </div>
-
-              {
-                ( question !== null ) ?
-                <div>
-                  <div className="flex justify-between items-start gap-3">
-                  <h1 className="text-2xl font-semibold">{ question[active].questions }</h1>
-                  <span className="bg-zinc-800 text-zinc-200 text-sm p-1 px-2 rounded border border-zinc-600">{ question[active].type }</span>
-                  </div>
-                    <div className="flex flex-col gap-3 mt-4">
-                        <textarea placeholder="Start Speaking..." rows={10} defaultValue={answer} 
-                        className="p-2 px-3 rounded border border-zinc-700 outline-none" name="answer" id="txt"></textarea>
-                    </div>
-                </div>
-                :
-                ""
-              }
-            <div className="my-4">
-
-            </div>
-
-
-            <div className="my-4">
-
-            {
-                // questions[active].type === 'mcq' ? 
-                // <div className="flex flex-col gap-3">
-                //     {
-                //         questions[active]?.options!.map((item : string , index) => {
-                //             return <button
-                //             className="p-2 bg-zinc-800 hover:bg-zinc-700 transition-colors font-medium border border-zinc-700 rounded" 
-                //             key={index}>{item}</button>
-                //         })
-                //     }
-                // </div>
-                // :
-                // ""
-            }
-            </div>
-
-            
-
-            <button className="p-2 flex justify-center gap-1 font-semibold rounded bg-green-600 mt-10 w-40 mx-auto" 
-            onClick = { handleNext }>
-                { active == questions.length - 1  ? "Finish" : "Next"  } 
-                <ArrowRight/>
-            </button>
-    </div>
+interface QuestionType {
+  questions: string;
+  point: number;
+  type: string;
 }
 
+function Interview() {
+  const [active, setActive] = useState(0); // for question indexing
+  const [question, setQuestion] = useState<QuestionType[] | null>(null); // array of questions generated by AI
+  const [answer, setAnswer] = useState(""); //answer written by user
+  // const { data, isPending, error } = useGenerateSpeech(question?.[active].questions); // genaerate Speech
+  const [start, setStart] = useState(false);
+  const audioref = useRef<HTMLAudioElement | null>(null);
+  const [speeches, setSpeeches] = useState<string[]>([]);
 
-export default Interview
+  // adding to the Store
+  const { addQuestion } = useQuestions();
+
+  const input = useRef<HTMLTextAreaElement | null>(null);
+  const router = useRouter();
+  const isFetching = question === null;
+  const query = useSearchParams();
+
+  // text to speech
+  const { toast } = useToast();
+
+  useEffect(() => {
+    async function getQuestion() {
+      try {
+        const response = await axios.post(
+          `${process.env.NEXT_PUBLIC_URL}/api/generateQuestions`,
+          {
+            data: {
+              role: query.get("role"),
+              tech: query.get("tech"),
+              position: query.get("position"),
+            },
+          }
+        );
+
+        setQuestion(response.data.data);
+      } catch (err) {
+        if (err instanceof Error) console.log(err.message);
+      }
+    }
+
+    getQuestion();
+  }, []);
+
+  function handleNext() {
+    if (!answer) {
+      return toast({
+        variant: "destructive",
+        title: "Answer the Question",
+        description: "you did'nt answered this question",
+      });
+    }
+
+    if (active === questions.length - 1) {
+      router.replace("/generate-result");
+    } else {
+      if (question != null) {
+        setActive((prev) => prev + 1);
+        addQuestion({ question: question[active].questions, answer });
+        setAnswer("");
+      }
+    }
+  }
+
+  function handleNote(note: string) {
+    setAnswer(note);
+  }
+
+  // hitting server url for generating text to speech recognition
+  useEffect(() => {
+    async function fetchSpeech() {
+      try {
+        // for(let i = 0 ; i < question!.length ; i++ ){
+        const response = await axios.post(
+          `${process.env.NEXT_PUBLIC_URL}/api/generate-speech`,
+          { question: question![active].questions }
+        );
+        setSpeeches((prev) => [...prev, response.data.source]);
+        console.log(speeches);
+        // }
+      } catch (err) {
+        console.log("error in Speech Generation", err);
+      }
+    }
+
+    if (question != null) fetchSpeech();
+  }, [question]);
+
+  return (
+    <div className="flex w-3/5 justify-center mt-20 gap-4 items-center mx-auto">
+      <div className="w-full flex flex-col pb-20">
+        {question !== null && start ? (
+          <div>
+            <div className="flex justify-between items-start gap-3">
+              <div className="">
+                {/* if active question index is under speech length  */}
+                {active < speeches.length && (
+                  <audio
+                    ref={audioref}
+                    className="hidden"
+                    src={speeches[active]}
+                    controls
+                    autoPlay
+                    autoFocus
+                  ></audio>
+                )}
+              </div>
+
+              {question && (
+                <WordFadeIn
+                  key={active}
+                  className="text-semibold"
+                  words={question[active].questions}
+                />
+              )}
+
+              <span className="bg-zinc-800 text-zinc-200 text-sm p-1 px-2 rounded-full border border-zinc-600">
+                {question[active].type}
+              </span>
+            </div>
+            <div className="flex flex-col gap-3 mt-4">
+              <textarea
+                ref={input}
+                placeholder="Start Speaking..."
+                rows={10}
+                onChange={(e) => setAnswer(e.target.value)}
+                value={answer}
+                className="p-2 px-3 focus:border-green-900 focus:shadow-lg focus:shadow-green-950 rounded-md border border-zinc-700 outline-none"
+                name="answer"
+                id="txt"
+              ></textarea>
+
+              <div className="text-zinc-300">
+                <button
+                  className="p-1"
+                  onClick={() => {
+                    audioref.current?.play();
+                  }}
+                >
+                  <Play size={16} />
+                </button>
+                <button
+                  className="p-1"
+                  onClick={() => {
+                    audioref.current?.pause();
+                  }}
+                >
+                  <Pause size={16} />
+                </button>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div>
+            <h1 className="text-3xl mb-4 animate-pulse font-semiq">
+              Generating questions...
+            </h1>
+            <div className="p-2 px-3 rounded border border-zinc-700 outline-none h-72 w-full">
+              <p className="text-zinc-600">Starting Interview</p>
+            </div>
+          </div>
+        )}
+
+        <div className="my-10 flex justify-center gap-3 items-center">
+          <Dictaphone isLoading={isFetching} handleNote={handleNote} />
+          <span className="text-zinc-500 text-sm">or</span>
+
+          <button
+            disabled={isFetching}
+            onClick={() => {
+              input.current?.focus();
+            }}
+            className="border border-zinc-700 bg-zinc-700/30 text-zinc-200 disabled:bg-zinc-700/30 disabled:text-zinc-300 disabled:border-none disabled:cursor-not-allowed flex justify-center items-center gap-2 rounded-xl p-2 px-5  min-w-44 "
+          >
+            <Keyboard size={16}></Keyboard>
+            <span>Start Writing </span>
+          </button>
+        </div>
+
+        <div className="w-3/5 bg-zinc-950 p-4 z-10 fixed bottom-0 border-t ">
+          <button
+            onClick={handleNext}
+            disabled={isFetching}
+            className="border border-green-800 bg-green-700 text-green-50 disabled:bg-zinc-700/30 disabled:text-zinc-300 disabled:border-none disabled:cursor-not-allowed flex justify-center items-center gap-2 rounded-xl p-2 px-5  min-w-44 w-full mx-auto"
+          >
+            Next
+          </button>
+        </div>
+      </div>
+
+      <Dialog
+        defaultOpen
+        onOpenChange={() => {
+          setStart((prev) => !prev);
+        }}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Things to Keep in Mind 💭</DialogTitle>
+            <DialogDescription>
+              <div className="flex bg-white my-2 justify-center p-2 rounded-md border ">
+                <Image
+                  src="/sophie.png"
+                  height={200}
+                  width={200}
+                  alt="ai avatar"
+                ></Image>
+                <audio
+                  src="/sophie-intro.mp3"
+                  autoPlay
+                  className="hidden"
+                ></audio>
+              </div>
+
+              <WordFadeIn
+                className="font-semibold text-black md:text-sm"
+                delay={0.3}
+                words={
+                  "Hi my name is Sophie , and i will be conducting your interview today. My role is to ask you series of question to access your skills, experience and suitablility for the position.This will include mix of technical and behavioural questions "
+                }
+              />
+
+              <hr />
+
+              <div className="mt-4">
+                <h2 className="text-md ps-2 text-white mt-2 border-s-2 border-green-600">
+                  Speech Recognition
+                </h2>
+                <h3 className="pt-2 ps-2">
+                  For Speech Recognition, we're using the browser's built-in
+                  Speech Recognition API, which can sometimes be unreliable.
+                  Therefore, please make sure to check your answer before
+                  proceeding to the next step.
+                </h3>
+              </div>
+              <div className="my-4">
+                <h2 className="text-md ps-2 text-white mt-2 border-s-2 border-green-600">
+                  Results
+                </h2>
+                <h3 className="pt-2 ps-2">
+                  For result generation, we rely on AI. Each question will be
+                  assigned points to evaluate how effectively the answer meets
+                  the interviewer's expectations.
+                </h3>
+              </div>
+            </DialogDescription>
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}
+
+export default Interview;

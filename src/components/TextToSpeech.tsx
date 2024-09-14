@@ -14,7 +14,7 @@ function TextToSpeech( { text } : { text : string }){
         const uttr = new SpeechSynthesisUtterance(text)
 
         setUtterance(uttr)
-        setVoice(voices[0])
+        setVoice(voices[2])
 
 
         return () => { syth.cancel() }
@@ -40,13 +40,13 @@ function TextToSpeech( { text } : { text : string }){
         if (isPaused) {
           synth.resume();
         }
+        console.log("voice" , synth )
 
         utterance.voice = voice ;
         utterance.pitch = 1.5 ;
         utterance.rate = 1 ;
         synth.speak(utterance);
         setIsPaused(false);
-
       };
     
     

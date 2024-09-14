@@ -85,6 +85,11 @@ export const techStack:TechStack = {
       { title: "Keras", active: false },
       { title: "PyTorch", active: false },
       { title: "Jupyter Notebook", active: false }
+    ] ,
+    "UI/UX Designer" : [
+      { title : "Figma" , active : false } ,
+      { title : "Photoshop" , active : false } ,
+      { title : "Adobe Sketch" , active : false } ,
     ]
   }
 

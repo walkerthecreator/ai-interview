@@ -122,3 +122,25 @@
     --ring: 142.4 71.8% 29.2%;
   }
 }
+
+
+/* animation */
+
+.slide-up{
+  animation: slide ;
+  animation-duration: 1s ;
+  position: relative;
+  animation-timing-function: ease;
+  /* top: 18px ; */
+}
+
+@keyframes slide {
+  from {
+    opacity: 0.8 ;
+    top : 28px ;
+  }
+  to{
+    opacity : 1 ;
+    top : 0 ;
+  }
+}
