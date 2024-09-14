@@ -2,8 +2,7 @@
 import { useState } from "react"
 import { cn } from "@/lib/utils"
 import { techStack , initialTopics , interviewRoles } from "@/lib/constant"
-import axios from "axios"
-import { useRouter } from "next/navigation"
+import { useParams, usePathname, useRouter, useSearchParams } from "next/navigation"
 
 
 interface TechStackType {
@@ -18,8 +17,9 @@ function Home(){
     const [ active , setActive] = useState("FullStack Developer")
     const [ tech , setTech ] = useState<TechStackType []>([...techStack["FullStack Developer"]])
     const [ role , setRole ] = useState('junior')
-
     
+    const  params  = useSearchParams()
+    const pathname = usePathname()
 
     function handleClick(topic : { title : string , active : boolean }){
         setActive(topic.title)
@@ -41,22 +41,24 @@ function Home(){
     }
 
     function handleSubmit(){
-        router.push('/interview')
 
-        // const techArray = tech.filter( item => item.active === true )
+        const techArray = []
 
-        // const response = await axios.post(`process.env.NEXT_URL/api` , {
-        //     role ,
-        //     tech : techArray ,
-        //     topics 
-        // })
+        for(let i of tech){
+            if(i.active) techArray.push(i.title)
+        }
 
-        // const { data } = response
-        // if(response.status == 200 ){
-
-        // }
+        const query = new  URLSearchParams(params)
+        query.set('role' , active )
+        query.set('tech' , JSON.stringify(techArray))
+        query.set('position' , role )
+        router.replace(`/interview/?${query.toString()}`)
     }
 
+    console.log('role' , role)
+    console.log('tech' , tech )
+    console.log('active' , active )
+    console.log('params' , params)
 
     return <div className="w-full min-h-screen flex flex-col justify-around md:w-2/5 mx-auto">
         <div className="">
@@ -71,6 +73,8 @@ function Home(){
                 }
             </div>
         </div>
+
+
 
         <div className="">
             <h1 className="text-3xl my-2 font-semibold">Tech Stack</h1> 
@@ -87,13 +91,13 @@ function Home(){
 
     <div className="w-full ">
         <h1 className="text-3xl my-8 font-semibold">Select Level</h1> 
-        <div className="w-fit mb-4 bg-stone-700 p-[2px] rounded-md mx-auto flex gap-1">
+        <div className="w-fit mb-4 bg-stone-300 text-black  p-[2px] rounded mx-auto flex items-center gap-1">
         {
             interviewRoles.map((item , index) => {
             return <button
                     onClick={() =>  setRole(item)  }
                     key={index}
-                    className={ cn("w-fit px-4 p-2 bg-white-700 rounded text-white " , role === item ? 'bg-stone-900' : ''  )}>
+                    className={ cn("w-16 px-6 p-1 rounded" , role === item ? 'bg-white shadow shadow-zinc-400' : ''  )}>
                     {item}
                 </button>
 

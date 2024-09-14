@@ -2,8 +2,13 @@ import { cn } from "@/lib/utils";
 import { CircleStop, Mic, Play } from "lucide-react";
 import { useEffect, useState } from "react";
 
+interface SpeechType {
+  handleNote : ( note : string ) => void ,
+  isLoading : boolean 
+}
 
-function Speech({ handleNote } : { handleNote : ( note : string ) => void  }){
+
+function Speech({ handleNote , isLoading } : SpeechType ){
 
   const [ isRecording , setIsRecording ] = useState(false)
 
@@ -49,7 +54,8 @@ function Speech({ handleNote } : { handleNote : ( note : string ) => void  }){
 
   return <div>
     <button
-     className={cn(`p-1 rounded-lg  px-4` , isRecording ? "bg-red-600 text-red-100" : "bg-blue-600 text-blue-100" )}
+    disabled={ isLoading }
+     className={cn(`p-2 min-w-44 rounded-xl px-4 disabled:bg-zinc-700/30 disabled:text-zinc-300 disabled:cursor-not-allowed` , isRecording ? "bg-red-600 text-red-100" : "bg-white text-black" )}
      onClick={ startRecordController }>{ isRecording ?
       <span className="flex justify-center gap-1 items-center">
         <span className="animate-pulse">
