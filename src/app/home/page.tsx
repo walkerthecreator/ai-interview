@@ -3,6 +3,8 @@ import { useState } from "react"
 import { cn } from "@/lib/utils"
 import { techStack, initialTopics, interviewRoles } from "@/lib/constant"
 import { useParams, usePathname, useRouter, useSearchParams } from "next/navigation"
+import { AnimatePresence, motion } from "framer-motion"
+import { CircleX } from "lucide-react"
 
 
 interface TechStackType {
@@ -32,11 +34,9 @@ function Home() {
         setTopics(updatedArr)
     }
 
-    function handleTechStack(title: string) {
-        const updatedArr = tech.map((item) => {
-            if (item.title === title) return { ...item, active: !item.active }
-            return item
-        })
+    function handleTechStack(index: number) {
+        const updatedArr = [...tech]
+        updatedArr[index].active = !updatedArr[index].active
         setTech(updatedArr)
     }
 
@@ -63,7 +63,9 @@ function Home() {
                     topics.map((item, index) => {
                         return <button key={index}
                             onClick={() => { handleClick(item) }}
-                            className={cn("transition-color p-1 border px-3 rounded-md", item.active && "bg-green-500/90 text-white")}>{item.title}</button>
+                            className={cn("transition-color p-1 border px-3 rounded-lg", item.active && "bg-green-500/90 text-white")}>
+                            {item.title}
+                        </button>
                     })
                 }
             </div>
@@ -76,9 +78,13 @@ function Home() {
             <div className="flex gap-2 mt-4 flex-wrap">
                 {
                     tech.map((item: TechStackType, index: number) => {
-                        return <button key={index}
-                            onClick={() => { handleTechStack(item.title) }}
-                            className={cn("transition-color p-1 border px-3 rounded-md", item.active && "bg-white text-black")}>{item.title}</button>
+                        return <motion.button key={index}
+                            onClick={() => { handleTechStack(index) }}
+                            animate={{ backgroundColor: item.active ? "#ffffff" : "transparent" }}
+                            transition={{ duration: 0.2 }}
+                            className={cn("transition-color p-1 border px-3 rounded-lg flex items-center gap-2", item.active && "bg-white text-black")}>
+                            {item.title}
+                        </motion.button>
                     })
                 }
             </div>

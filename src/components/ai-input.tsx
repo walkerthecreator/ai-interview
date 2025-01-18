@@ -5,8 +5,10 @@ import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Textarea } from "@/components/ui/textarea";
 import { useAutoResizeTextarea } from "@/hooks/use-auto-resize-textarea";
+import Dictaphone from "@/components/speech";
 
 interface AIInputProps {
+    isLoading?: boolean;
     id?: string
     placeholder?: string
     minHeight?: number
@@ -17,11 +19,12 @@ interface AIInputProps {
 
 export function AIInput({
     id = "ai-input",
-    placeholder = "Type your message...",
+    placeholder = "Type your answer...",
     minHeight = 52,
     maxHeight = 200,
     onSubmit,
-    className
+    className,
+    isLoading
 }: AIInputProps) {
     const { textareaRef, adjustHeight } = useAutoResizeTextarea({
         minHeight,
@@ -35,6 +38,8 @@ export function AIInput({
         setInputValue("");
         adjustHeight(true);
     };
+
+    console.log(inputValue)
 
     return (
         <div className={cn("w-full py-4", className)}>
@@ -71,11 +76,11 @@ export function AIInput({
 
                 <div
                     className={cn(
-                        "absolute top-1/2 -translate-y-1/2 rounded-xl bg-black/5 dark:bg-white/5 py-1 px-1 transition-all duration-200",
+                        "absolute top-1/2 -translate-y-1/2 rounded-2xl bg-black/5 dark:bg-white/5 py-1 px-1 transition-all duration-200",
                         inputValue ? "right-10" : "right-3"
                     )}
                 >
-                    <Mic className="w-4 h-4 text-black/70 dark:text-white/70" />
+                    <Dictaphone isLoading handleNote={(note: string) => setInputValue(note)} />
                 </div>
                 <button
                     onClick={handleReset}

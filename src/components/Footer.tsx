@@ -11,7 +11,7 @@ export function Footer() {
     return (
         <BackgroundBeamsWithCollision>
             <h2 className="text-2xl relative z-20 md:text-4xl lg:text-4xl font-bold text-center text-black dark:text-zinc-300 tracking-tight">
-                Get&apos; Started with your {" "}
+                Get Started with your {" "}
                 <div className="relative flex flex-col mx-auto  w-max [filter:drop-shadow(0px_1px_3px_rgba(27,_37,_80,_0.14))]">
                     <div className="pointer-events-none z-10 whitespace-pre-wrap bg-gradient-to-b from-white to-green-400  bg-clip-text text-center text-7xl font-bold leading-none tracking-tighter text-transparent py-4">
                         <span className="">Free Interview</span>

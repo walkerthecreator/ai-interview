@@ -1,24 +1,24 @@
 import { cn } from "@/lib/utils";
-import { CircleStop, Mic, Play } from "lucide-react";
+import { AudioLines, CircleStop, Mic, Play } from "lucide-react";
 import { useEffect, useState } from "react";
 
+
 interface SpeechType {
-  handleNote : ( note : string ) => void ,
-  isLoading : boolean 
+  handleNote: (note: string) => void,
+  isLoading: boolean
 }
 
+function Speech({ handleNote, isLoading }: SpeechType) {
 
-function Speech({ handleNote , isLoading } : SpeechType ){
-
-  const [ isRecording , setIsRecording ] = useState(false)
+  const [isRecording, setIsRecording] = useState(false)
 
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
 
-  if(!SpeechRecognition){
-    return <div className="bg-red-700/40 w-fit px-1 rounded mx-auto">
-    <h6 className="">Your current browser does'nt support speech recognition</h6>
-    <h3>Suggestion : Please Use Chrome </h3>
-    </div> 
+  if (!SpeechRecognition) {
+    return <div className="bg-red-700/40 w-fit px-1 rounded mx-auto absolute top-0 right-0">
+      <h6 className="">Your current browser doesn't support speech recognition</h6>
+      <h3>Suggestion : Please Use Chrome,Brave, or any other browser. </h3>
+    </div>
   }
 
   const microphone = new SpeechRecognition();
@@ -28,48 +28,41 @@ function Speech({ handleNote , isLoading } : SpeechType ){
   microphone.lang = "en-US";
 
   const startRecordController = () => {
-    
-      if(isRecording === true ){
-        microphone.stop()
-      }
-      else{
-        microphone.start()
 
-        microphone.onend = () => {
-          console.log('stopped recording !')
-        }
+    if (isRecording === true) {
+      microphone.stop()
+    }
+    else {
+      microphone.start()
 
-        microphone.onresult = event => {
-          handleNote(event.results[0][0].transcript)
-        }
-      
-        microphone.onstart = () => {
-          console.log("microphones on");
-        };
+      microphone.onend = () => {
+        console.log('stopped recording !')
+        setIsRecording(false)
       }
 
-      setIsRecording(prev => !prev )
+      microphone.onresult = event => {
+        handleNote(event.results[0][0].transcript)
+      }
+
+      microphone.onstart = () => {
+        console.log("microphones on");
+      };
+    }
+
+    setIsRecording(prev => !prev)
   };
 
 
-  return <div>
-    <button
-    disabled={ isLoading }
-     className={cn(`p-2 min-w-44 rounded-xl px-4 disabled:bg-zinc-700/30 disabled:text-zinc-300 disabled:cursor-not-allowed` , isRecording ? "bg-red-600 text-red-100" : "bg-white text-black" )}
-     onClick={ startRecordController }>{ isRecording ?
-      <span className="flex justify-center gap-1 items-center">
-        <span className="animate-pulse">
-          <CircleStop size={16} />
-        </span>
-        Stop
-      </span>
-      : 
-      <span className="flex justify-center gap-1 items-center">
-        <Mic size={16} />
-        Start Speaking
-      </span>
-       }</button>  
-  </div>
+  return <button
+    disabled={false}
+    className={cn(`p-2 rounded-xl disabled:bg-zinc-700/30 disabled:text-zinc-300 disabled:cursor-not-allowed`, isRecording &&
+      "text-red-400")}
+    onClick={startRecordController}>
+    {isRecording ?
+      <CircleStop size={18} className="text-red-600" />
+      :
+      <AudioLines  size={18} />
+    }</button>
 }
 
 

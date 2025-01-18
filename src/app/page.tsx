@@ -79,12 +79,10 @@ const Home = () => {
         </div>
       </div>
 
-      {/* add badges */}
       <div className='flex gap-5'>
         <ActiveBadge title='No Credit Card required' />
         <ActiveBadge title='Free Trial' />
       </div>
-      {/* <ActiveBadge title='No Credit Card required' /> */}
 
     </div>
 

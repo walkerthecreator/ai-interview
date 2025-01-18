@@ -20,6 +20,7 @@ import {
 import Image from "next/image";
 import { TextShimmerWave } from "@/components/ui/text-shimmer-wave";
 import { ErrorDialog } from "@/components/error-dailog";
+import { AIVoiceInputDemo } from "@/components/voice-input-demo";
 
 const questions: QuestionType[] = [
   {
@@ -71,7 +72,7 @@ function Interview() {
   const [answer, setAnswer] = useState(""); //answer written by user
   // const { data, isPending, error } = useGenerateSpeech(question?.[active].questions); // genaerate Speech
 
-  const [start, setStart] = useState(false);
+  const [start, setStart] = useState(true);
   const audioref = useRef<HTMLAudioElement | null>(null);
   const [speeches, setSpeeches] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -182,20 +183,24 @@ function Interview() {
                 )}
               </div>
 
+
+
               {question && (
-                <WordFadeIn
-                  key={active}
-                  className="text-semibold"
-                  words={question[active].question}
-                />
+                <div>
+                  <WordFadeIn
+                    key={active}
+                    className="text-semibold"
+                    words={question[active].question}
+                  />
+                  <span className="bg-zinc-800 float-end text-zinc-200 text-sm p-1 px-2 rounded-full border border-zinc-600">
+                    {question[active].topic}
+                  </span>
+                </div>
               )}
 
-              <span className="bg-zinc-800 text-zinc-200 text-sm p-1 px-2 rounded-full border border-zinc-600">
-                {question[active].topic}
-              </span>
             </div>
             <div className="flex flex-col gap-3 mt-4">
-              <textarea
+              {/* <textarea
                 ref={input}
                 placeholder="Start Speaking..."
                 rows={10}
@@ -204,7 +209,7 @@ function Interview() {
                 className="p-2 px-3 focus:border-green-900 focus:shadow-lg focus:shadow-green-950 rounded-md border border-zinc-700 outline-none"
                 name="answer"
                 id="txt"
-              ></textarea>
+              ></textarea> */}
 
               <div className="text-zinc-300">
                 <button
@@ -224,6 +229,14 @@ function Interview() {
                   <Pause size={16} />
                 </button>
               </div>
+
+
+              <div className="mt-10">
+                <AIVoiceInputDemo />
+              </div>
+
+
+
             </div>
           </div>
         ) : (
@@ -245,7 +258,7 @@ function Interview() {
         )}
 
         {
-          question !== null &&
+          question !== null && false &&
           <div className="my-10 flex justify-center gap-3 items-center">
             <Dictaphone isLoading={isFetching} handleNote={handleNote} />
             <span className="text-zinc-500 text-sm">or</span>
@@ -282,7 +295,7 @@ function Interview() {
       </div>
 
       <Dialog
-        defaultOpen
+        // defaultOpen
         onOpenChange={() => {
           setStart((prev) => !prev);
         }}
