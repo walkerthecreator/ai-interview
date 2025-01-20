@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import { Textarea } from "@/components/ui/textarea";
 import { useAutoResizeTextarea } from "@/hooks/use-auto-resize-textarea";
 import Dictaphone from "@/components/speech";
+import { AudioRecorder } from "@/hooks/use-audio";
 
 interface AIInputProps {
     isLoading?: boolean;
@@ -80,7 +81,9 @@ export function AIInput({
                         inputValue ? "right-10" : "right-3"
                     )}
                 >
-                    <Dictaphone isLoading handleNote={(note: string) => setInputValue(note)} />
+                    {/* <Dictaphone isLoading handleNote={(note: string) => setInputValue(note)} /> */}
+                    <AudioRecorder  />
+                
                 </div>
                 <button
                     onClick={handleReset}

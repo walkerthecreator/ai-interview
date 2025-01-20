@@ -21,6 +21,7 @@ import Image from "next/image";
 import { TextShimmerWave } from "@/components/ui/text-shimmer-wave";
 import { ErrorDialog } from "@/components/error-dailog";
 import { AIVoiceInputDemo } from "@/components/voice-input-demo";
+import { AudioRecorder } from "@/hooks/use-audio";
 
 const questions: QuestionType[] = [
   {
@@ -229,14 +230,6 @@ function Interview() {
                   <Pause size={16} />
                 </button>
               </div>
-
-
-              <div className="mt-10">
-                <AIVoiceInputDemo />
-              </div>
-
-
-
             </div>
           </div>
         ) : (
