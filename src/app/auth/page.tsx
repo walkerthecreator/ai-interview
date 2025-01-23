@@ -15,11 +15,17 @@ export default function GlowEffectCardBackground() {
           <input type="text" className='p-1 px-2 text-sm w-full border  rounded-lg placeholder:text-sm outline-zinc-700' placeholder='Enter your email' />
           <input type="text" className='p-1 px-2 text-sm w-full border  rounded-lg placeholder:text-sm outline-zinc-700' placeholder='choose a strong password' /> 
 
+          <button className='bg-gradient-to-b mt-4 from-zinc-900 border bg-zinc-950 text-sm w-full rounded-lg p-1'>Sign In</button>
+          
           <p className='my-3 text-xs text-zinc-400 text-center'>
             or  
           </p>
 
-          <button className='bg-gradient-to-b from-zinc-900 border bg-zinc-950 text-sm w-full rounded-lg p-1'>Sign In</button>
+          <button className='bg-gradient-to-b from-zinc-900 border bg-zinc-950 text-sm w-full rounded-lg p-1'>Sign In with Google</button>
+          <button className='bg-gradient-to-b from-zinc-900 border bg-zinc-950 text-sm w-full rounded-lg p-1'>Sign In with Github</button>
+          {/* <button className='bg-gradient-to-b from-zinc-900 border bg-zinc-950 text-sm w-full rounded-lg p-1'>Sign In with Google</button> */}
+
+
 
 
 
