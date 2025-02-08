@@ -1,0 +1,79 @@
+
+Architecture & System Design Questions:
+1. "In your SDK for emissions calculation, how would you handle fault tolerance and ensure data consistency when a webhook delivery fails? Design a robust retry and compensation mechanism."
+- SDK Webhook Fault Tolerance:
+"I would implement a robust event sourcing pattern with a message queue system like RabbitMQ or Apache Kafka. Each webhook event would be persisted in a database with states like 'PENDING', 'IN_PROGRESS', 'COMPLETED', or 'FAILED'. The retry mechanism would use an exponential backoff strategy with configurable retry limits. For example:
+- Initial retry after 5 seconds
+- Subsequent retries at 25s, 125s, etc.
+- After max retries, event moves to a dead letter queue
+- Implement circuit breakers to prevent cascade failures
+- Provide a dashboard for manual intervention and replay capabilities"
+
+
+2. "Your experience mentions handling 100k+ API calls daily. Design a complete system architecture that could handle 10x that load while maintaining sub-100ms response times. Include considerations for database choices, caching strategies, and load balancing."
+- Scaling to 1M+ Daily API Calls:
+"To handle 1M+ daily API calls:
+Architecture:
+
+
+Use API Gateway (like Kong) for rate limiting and auth
+Multiple load balancers (nginx) in active-active configuration
+Containerized microservices with auto-scaling (Kubernetes)
+Read replicas for databases with write-through caching
+
+Caching Strategy:
+
+- Redis cluster for hot data
+- CDN for static assets
+- Implement cache warming for predictable high-load periods
+- Use cache-aside pattern with TTL based on data volatility
+
+Database:
+
+- Partition data by tenant/date
+- Use materialized views for heavy read operations
+- Implement connection pooling
+- Regular performance monitoring and query optimization"
+
+3. "For your multi-user drawing tool, explain how you would handle concurrent edits to prevent conflicts while maintaining real-time responsiveness. What would be your conflict resolution strategy?"
+
+Multi-user Drawing Tool Concurrency:
+"I'd implement Operational Transformation (OT) or Conflict-free Replicated Data Types (CRDTs) for conflict resolution. Each drawing operation would have:
+
+
+Unique identifier
+Timestamp
+User ID
+Operation type and parameters
+Vector clock for causality tracking
+
+For conflict resolution:
+
+Use intention preservation principle
+Maintain operation history
+Transform concurrent operations to achieve convergence
+Implement LastWriterWins for simple conflicts
+Use version vectors for complex state reconciliation"
+
+Performance & Optimization Questions:
+4. "You mentioned reducing page load times by 40% in your e-commerce work. Walk me through your complete performance audit process, specific optimizations implemented, and how you measured improvements. What tools and metrics did you use?"
+
+5. "In your metaverse game, how would you optimize WebRTC connections for 100+ simultaneous users in a room while maintaining acceptable latency? What tradeoffs would you consider?"
+
+Real-time Systems Questions:
+6. "Explain your implementation of the delta-sync mechanism in your drawing tool. How would you handle scenarios where a client disconnects for 30 minutes and needs to resync with hundreds of changes?"
+
+7. "Design a scalable pub/sub system for your real-time dashboards that can handle thousands of concurrent connections with minimal latency. How would you handle back-pressure?"
+
+Technical Deep Dives:
+8. "Implement a custom rate limiting middleware for Node.js that supports both IP-based and API key-based limits, with configurable time windows and burst allowances. Consider distributed scenarios."
+
+9. "Design and implement a custom hook in React that handles complex canvas state management, including undo/redo functionality and real-time collaboration. Consider memory usage and performance."
+
+AI Implementation Question:
+10. "For your AI-based interview platform, explain how you would implement a real-time code evaluation system that can handle multiple programming languages, ensure security, and provide instant feedback. Include considerations for scaling and resource management."
+
+Behavioral/Experience Questions:
+11. "Describe the most challenging technical problem you encountered while building the property management system. What was your problem-solving approach, and what alternatives did you consider?"
+
+12. "Your experience shows you've worked with both WebSockets and WebRTC. Compare and contrast scenarios where you'd choose one over the other, using specific examples from your projects."
